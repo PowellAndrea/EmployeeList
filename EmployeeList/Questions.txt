@@ -1,0 +1,5 @@
+﻿When Printing by department, is the output one employee or
+all employess in the department?
+
+We have a gender field, but no gender data, is this by design?
+
