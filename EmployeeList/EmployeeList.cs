@@ -8,12 +8,18 @@ namespace EmployeeList
 {
     public class EmployeeList
     {
-        private Employee _head = null;
-        private Employee _tail = null;
+        private Employee _head;
+        private Employee _tail;
 
         enum Key { first, last, department };
 
+        public EmployeeList()
+        {
+            _head = null;
+            _tail = null;
+        }
 
+        //make case insensitive
         public Employee Find(string firstname, string lastname, string key, string? department)
         {
             Employee current = _head;
