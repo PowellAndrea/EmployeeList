@@ -37,6 +37,7 @@ namespace EmployeeList
 
             // Assuming the first line is actually the header here
             string record = textFieldParser.ReadLine();
+            record = record.ToLower();   // making header row case insensitive
             string[] header = record.Split(',');
             int headerColumns = header.Length;
 
@@ -46,44 +47,57 @@ namespace EmployeeList
 
             while (!textFieldParser.EndOfData)
             {
-                string LastName;
-                string FirstName;
-                string Gender;
-                string Department;
-                double Salary;
+                string LastName = string.Empty;
+                string FirstName = string.Empty;
+                string Gender = string.Empty;
+                string Department = string.Empty;
+                double Salary = 0.00;
 
                 string[] items = textFieldParser.ReadFields();
-                for (int index = 0; index < items.Length; index++)
+
+                for (int index = 0; index < header.Length; index++)
                 {
-                    if (index < headerColumns)
+                    string column = header[index];
+                    switch (column)
                     {
-                        ColumnName = header[index];
-                    }
-                    else
-                    {
-                        ColumnName = "Item" + index;
-                    }
+                        case "name":
+                            {
+                                // Fix this - sub string to space = first, everything else = last?
+                                string FullName;
+                                FullName = items[index];
+                                string[] Names = FullName.Split(" ");
+                                LastName = Names[0];
+                                FirstName = Names[1];
+                                continue;
+                            }
 
-                    myDictionary.Add(ColumnName, items[index]);
+                        case "gender":
+                            {
+                                Gender = items[index];
+                                continue;
+                            }
 
-                    // make keys not case sensative?
-                    if (myDictionary.ContainsKey("Name"))
-                    {
-                        LastName = myDictionary["Name"].ToString();
-                        // split into first and last
+                        case "department":
+                            {
+                                Department = items[index];
+                                continue;
+                            }
+
+                        case "salary":
+                            {
+                                string strSalary = items[index];
+                                strSalary = strSalary.Replace("$", "");
+                                double dblSalary = Convert.ToDouble(strSalary);
+                                Salary = dblSalary;
+                                continue;
+                            }
                     }
-                    FirstName = "need to split";
-                    if (myDictionary.ContainsKey("gender"))
-                    {
-                        Gender = myDictionary["Gender"];
-                    }
-
-                    Employee newEmployee = new(LastName, FirstName);
-
-                    //        //_department = department;
-                    //        //_salary = salary;
                 }
-
+                
+                Employee newEmployee = new(LastName, FirstName);
+                newEmployee.Salary = Salary;
+                newEmployee.Gender = Gender;
+                newEmployee.Department = Department;
             }
         }
     }
