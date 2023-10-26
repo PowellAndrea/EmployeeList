@@ -20,7 +20,7 @@ var choice = Console.ReadLine();
 switch (choice)
 {
     case "1":   // Print Employee List
-        //EmployeeList.Print();
+        myCompany.PrintEmployeeList();
         break;
     case "2":   // Find Employee
         break;
