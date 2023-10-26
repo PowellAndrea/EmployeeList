@@ -96,6 +96,7 @@ namespace EmployeeList
                 {
                     Employee oldHead = _head;
                     _head = newEmployee;
+                    newEmployee.Next = oldHead;
                     oldHead.Previous = _head;
                     return;
                 }
@@ -107,50 +108,50 @@ namespace EmployeeList
             #region Base Case
             while (current != null)
             {
-                // Case:  currentNode is greater than newNode, insert before
+                // Case:  current > newEmployee, insert before
                 if (current.LastName.CompareTo(newEmployee.LastName) > 0)
                 {
                     Employee oldCurrent = current;
-                    newEmployee.Next = oldCurrent.Next;
+                    newEmployee.Next = oldCurrent;
                     newEmployee.Previous = oldCurrent.Previous;
-
-                    oldCurrent.Next = newEmployee;
-                    return;
-                }
-                // Case:  currentLastName is less than newLastName
-                else
-                {   // Case:  current is the end of list
-                    if (current.Next == null)
-                    {   // Append and return
-                        current.Next = newEmployee;
-                        newEmployee.Previous = current;
-                        _tail = newEmployee;
-                        return;
-                    }
-                }
-
-                // Case:  currentNode < newNode < current.next
-                if (current.Next.LastName.CompareTo(newEmployee.LastName) > 0)
-                {
-
-                    Employee oldCurrent = current;
-                    oldCurrent.Next = newEmployee;
-
-                    newEmployee.Previous = oldCurrent;
-                    newEmployee.Next = oldCurrent.Next;
 
                     oldCurrent.Previous = newEmployee;
 
                     return;
                 }
+
+                // Case:  current < newEmployee, insert after
+                else
+                {   // Case:  current is the end of list
+                    if (current.Next == null)
+                    {   // Append and return
+                        _tail = newEmployee;
+                        current.Next = newEmployee;
+                        newEmployee.Previous = current;
+                        return;
                     }
-                //       currentNode < newNode > current.next
-                    current = current.Next;
+
+                    // Case:  currentNode < newNode < current.next
+                    if (current.Next.LastName.CompareTo(newEmployee.LastName) > 0)
+                    {
+                        Employee oldNext = current.Next;
+                        current.Next = newEmployee;
+
+                        newEmployee.Previous = current;
+                        newEmployee.Next = oldNext;
+
+                        oldNext.Previous= newEmployee;
+                        return;
+                    }
                 }
+
+                // currentNode < newNode > current.next
+                current = current.Next;
             }
-            #endregion Base Case
-            return;
+                return;
         }
+        #endregion Base Case
+
 
         public void Print()
         {
