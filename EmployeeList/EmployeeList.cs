@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
-// Add inherited link list type
+// Add inherited generic link list type
 namespace EmployeeList
 {
-    public class EmployeeList
+    public class EmployeeList : LinkedList<Employee>
     {
         private Employee _head;
         private Employee _tail;
 
-        enum Key { first, last, department };
+        public enum Key { first, last, department };
 
         public EmployeeList()
         {
@@ -22,26 +24,26 @@ namespace EmployeeList
             _tail = null;
         }
 
-        public Employee Find(string firstname, string lastname, string key, string? department)
+        public Employee Find(Employee findMe, string? key)
         {
             Employee current = _head;
             while (current != null)
             {
-                if (key == "first")
+                if (key == Key.first.ToString())
                 {
-                    if (current.FirstName == firstname && current.LastName == lastname)
+                    if (current.FirstName == findMe.FirstName && current.LastName == findMe.LastName)
                     {
                         return current;
                     }
                 }
-                else if (key == "department")
+                else if (key == Key.department.ToString())
                 {
-                    if (current.Department == department)
+                    if (current.Department == findMe.Department)
                     {
                         return current;
                     }
                 }
-                else if (current.LastName == lastname && current.FirstName == firstname)
+                else if (current.LastName == findMe.LastName && current.FirstName == findMe.FirstName)
                 {
                     return current;
                 }
@@ -50,39 +52,36 @@ namespace EmployeeList
             return null;
         }
 
-        public void Delete(string firstname, string lastname)
+        public void Delete(Employee phoEmployee)
         {
             Employee found;
-            while (true)
+            found = Find(phoEmployee, null);
+            if (found == null)
             {
-                found = Find(firstname, lastname, nameof(Key.last), null);
-                if (found == null)
+                return;
+            }
+            else if (found == _head)
+            {
+                if (_head.Next == null)
                 {
-                    return;
-                }
-                else if (found == _head)
-                {
-                    if (_head.Next == null)
-                    {
-                        _head = null;
-                        _tail = null;
-                    }
-                    else
-                    {
-                        _head = _head.Next;
-                        _head.Previous = null;
-                    }
+                    _head = null;
+                    _tail = null;
                 }
                 else
                 {
-                    found.Previous.Next = found.Next;
+                    _head = _head.Next;
+                    _head.Previous = null;
                 }
+            }
+            else
+            {
+                found.Previous.Next = found.Next;
             }
         }
 
-        public void Add(Employee newEmployee)
+
+        public void Add(Employee newEmployee, string? sort = null)  //Default sort = Last Name, First Name
         {
-            #region Head case
             if (_head == null)
             {
                 // empty list, add head and exit
@@ -91,32 +90,22 @@ namespace EmployeeList
                 return;
             }
             else
-            {   // Compare on Last - this will need fixed
-                if (_head.LastName.CompareTo(newEmployee.LastName) >= 0)
+            {   
+                if (compare(_head, newEmployee, sort) >= 0)
                 {
-                    Employee oldHead = _head;
-                    _head = newEmployee;
-                    newEmployee.Next = oldHead;
-                    oldHead.Previous = _head;
+                    InsertAfterHead(newEmployee);
                     return;
                 }
             }
-            #endregion
 
             Employee current = _head;
 
-            #region Base Case
             while (current != null)
             {
                 // Case:  current > newEmployee, insert before
-                if (current.LastName.CompareTo(newEmployee.LastName) > 0)
+                if (compare(current, newEmployee, sort) > 0)
                 {
-                    Employee oldCurrent = current;
-                    newEmployee.Next = oldCurrent;
-                    newEmployee.Previous = oldCurrent.Previous;
-
-                    oldCurrent.Previous = newEmployee;
-
+                    InsertBeforeCurrent(current, newEmployee);
                     return;
                 }
 
@@ -124,34 +113,138 @@ namespace EmployeeList
                 else
                 {   // Case:  current is the end of list
                     if (current.Next == null)
-                    {   // Append and return
-                        _tail = newEmployee;
-                        current.Next = newEmployee;
-                        newEmployee.Previous = current;
+                    {
+                        AddAsTail(current, newEmployee);
                         return;
                     }
 
                     // Case:  currentNode < newNode < current.next
-                    if (current.Next.LastName.CompareTo(newEmployee.LastName) > 0)
+                    if (compare(current, newEmployee) > 0)
                     {
-                        Employee oldNext = current.Next;
-                        current.Next = newEmployee;
-
-                        newEmployee.Previous = current;
-                        newEmployee.Next = oldNext;
-
-                        oldNext.Previous= newEmployee;
+                        InsertAfterCurrent(current, newEmployee);
                         return;
                     }
                 }
-
                 // currentNode < newNode > current.next
                 current = current.Next;
             }
-                return;
+            return;
         }
-        #endregion Base Case
 
+
+        private int compare(Employee current, Employee newEmployee, string? sort=null)
+        {
+            string currentChoice;
+            string newChoice;
+            switch (sort)
+            {
+                case "first":
+                    currentChoice = current.FirstName + current.LastName;
+                    newChoice = newEmployee.FirstName + newEmployee.LastName;
+                    break;
+                case "department":
+                    currentChoice = current.Department + current.LastName;
+                    newChoice = newEmployee.Department + newEmployee.LastName;
+                    break;
+                default:
+                    currentChoice = current.LastName + current.FirstName;
+                    newChoice = newEmployee.LastName + newEmployee.FirstName;
+                    break;
+            }
+            return (currentChoice.CompareTo(newChoice));
+        }
+
+        private void InsertAfterHead(Employee newEmployee)
+        {
+            Employee oldHead = _head;
+            _head = newEmployee;
+            newEmployee.Next = oldHead;
+            oldHead.Previous = _head;
+        }
+
+        private void AddAsTail(Employee current, Employee newEmployee)
+        {
+            _tail = newEmployee;
+            current.Next = newEmployee;
+            newEmployee.Previous = current;
+            return;
+        }
+
+        private void InsertAfterCurrent(Employee current, Employee newEmployee)
+        {
+            Employee oldNext = current.Next;
+            current.Next = newEmployee;
+
+            newEmployee.Previous = current;
+            newEmployee.Next = oldNext;
+
+            oldNext.Previous = newEmployee;
+            return;
+        }
+
+        private void InsertBeforeCurrent(Employee current, Employee newEmployee)
+        {
+            Employee oldCurrent = current;
+            newEmployee.Next = oldCurrent;
+            newEmployee.Previous = oldCurrent.Previous;
+
+            oldCurrent.Previous = newEmployee;
+
+            return;
+        }
+
+        public EmployeeList Sort(string? sortKey)
+        {
+            EmployeeList sortList = new();
+
+            Employee current = _head;
+            Employee newEmployee;
+
+            while (current != null)
+            {
+                current = current.Next;
+            }
+            return sortList;
+        }
+
+        public double GetAverageSalary()
+        {
+            int count = 0;
+            double avgSalary = 0;
+            if (_head != null)
+            {
+                Employee current = _head;
+                while (current != null)
+                {
+                    count++;
+                    avgSalary = avgSalary + current.Salary;
+                    current = current.Next;
+                }
+            }
+            return avgSalary / count;
+        }
+
+        public void Print(string? sortKey)
+        {
+            switch (sortKey){
+            case "2":  // First Name, Last Name
+                    {
+                        Print();
+                        break;
+                    }
+                case "3":  // Department
+                    {
+                        Print();
+                        break;
+                    }
+                default:  // Last Name, First Name
+                    {
+                        Print();
+                        break;
+                    }
+            }
+            return;
+        }
 
         public void Print()
         {
@@ -160,9 +253,10 @@ namespace EmployeeList
                 Employee current = _head;
                 while (current != null)
                 {
-                    Console.WriteLine(current.LastName + ", "
-                        + current.FirstName + ", "
-                        + current.Department + " department"
+                    Console.WriteLine(
+                        current.LastName + ", "
+                        + current.FirstName + ", \t"
+                        + ", Department: " + current.Department + "\t"
                         + ", Salary: " + current.Salary);
 
                     current = current.Next;

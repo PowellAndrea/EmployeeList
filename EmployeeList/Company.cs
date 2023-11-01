@@ -1,12 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System.Collections;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection.PortableExecutable;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-using System.Text.RegularExpressions;
-
-namespace EmployeeList
+﻿namespace EmployeeList
 {
     public class Company
     {
@@ -22,12 +14,46 @@ namespace EmployeeList
         {
             _employeeList = new();
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "employees.csv");
-            EmployeeList = DataLoader.LoadData(path);
+            _employeeList = DataLoader.LoadData(path);
         }
 
-        public void PrintEmployeeList()
+        public string GetAverageSalary()
         {
-            EmployeeList.Print();
+            return _employeeList.GetAverageSalary().ToString("C");
+        }
+
+        public void PrintEmployeeList(string key)
+        {
+            // validation
+            //if(Enum.IsDefined(EmployeeList.Key., object sortKey){ }
+            // Fix: Setup Search Strings and pass
+            // Fix this - easy to break
+            //EmployeeList.Key key = sortKey;
+            // Print.SortList
+            _employeeList.Print(key);
+        }
+
+        public Employee FindEmployee(Employee phoEmployee, string key) 
+        {
+            EmployeeList sortedList;
+            switch (key)
+            {
+                case "first":
+                    {
+                        sortedList = _employeeList.Sort("first");
+                        break;
+                    }
+                case "department":
+                    {
+                        sortedList = _employeeList.Sort("department");
+                        break;
+                    }
+                default:
+                    sortedList = _employeeList;
+                    break;
+            }
+
+            return sortedList.Find(phoEmployee, key);
         }
     }
 }

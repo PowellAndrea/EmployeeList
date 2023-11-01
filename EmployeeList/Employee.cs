@@ -17,20 +17,25 @@
         private String _department;
         private double _salary;
 
+        public Employee()
+        {
+            _lastName = string.Empty; 
+            _firstName = string.Empty;
+            _gender = string.Empty;
+            _department = string.Empty;
+            _salary = 0;
+        }
+        
         public Employee(
             string lastName, 
             string firstName
-            //string gender,
-            //string department,
-            //double salary,
-            //string tempName
             )
         {
             _lastName = lastName;
             _firstName = firstName;
-            //_gender = gender;
-            //_department = department;
-            //_salary = salary;
+            _gender = string.Empty;
+            _department = string.Empty;
+            _salary = 0;
         }
     }
 }
