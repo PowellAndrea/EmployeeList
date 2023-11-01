@@ -6,7 +6,7 @@
         public string FirstName { get => _firstName; set => _firstName = value; }
         public string Gender { get => _gender; set => _gender = value; }
         public string Department { get => _department; set => _department = value; }
-        public double Salary { get => _salary; set => _salary = value; }
+        public decimal Salary { get => _salary; set => _salary = value; }
 
         public Employee Previous;
         public Employee Next;
@@ -15,7 +15,7 @@
         private String _firstName;
         private String _gender;
         private String _department;
-        private double _salary;
+        private decimal _salary;
 
         public Employee()
         {
@@ -36,6 +36,19 @@
             _gender = string.Empty;
             _department = string.Empty;
             _salary = 0;
+        }
+    
+        public string Print(string sort)
+        {
+            switch (sort)
+            {
+                case "first":
+                    return _firstName + " " + _lastName + ",\t " + _gender + ", " + "Department: " + _department + ", " + _salary.ToString();
+                case "department":
+                    return "Department: " + _department + ",\t " + _firstName + " " + _lastName + _salary.ToString() + ", Gender: " + _gender;
+                default:
+                    return _lastName + " " + _firstName + ",\t " + "Department: " + _department + ", " + _salary.ToString() + ", Gender: " +_gender;
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace EmployeeList
                 string FirstName = string.Empty;
                 string Gender = string.Empty;
                 string Department = string.Empty;
-                double Salary = 0.00;
+                decimal Salary = 0;
 
                 string[] items = textFieldParser.ReadFields();
 
@@ -71,8 +71,10 @@ namespace EmployeeList
                             {
                                 string strSalary = items[index];
                                 strSalary = strSalary.Replace("$", "");
-                                double dblSalary = Convert.ToDouble(strSalary);
-                                Salary = dblSalary;
+                                if (decimal.TryParse(strSalary, out decimal value))
+                                {
+                                    Salary = value;
+                                }
                                 continue;
                             }
                     }
@@ -82,7 +84,7 @@ namespace EmployeeList
                 newEmployee.Salary = Salary;
                 newEmployee.Gender = Gender;
                 newEmployee.Department = Department;
-                employeeList.Add(newEmployee);
+                employeeList.Add(newEmployee, "last");
             }
 
            return employeeList;

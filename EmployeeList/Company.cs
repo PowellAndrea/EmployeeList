@@ -33,6 +33,22 @@
             _employeeList.Print(key);
         }
 
+        public void newEmployee(
+            string firstName,
+            string lastName,
+            string department,
+            string gender,
+            string salary)
+        {
+            Employee newEmployee = new Employee(lastName, firstName);
+            newEmployee.Department = department;
+            newEmployee.Gender = gender;
+            if(decimal.TryParse(salary, out decimal value))
+            {
+                newEmployee.Salary = value;
+            };
+        }
+
         public Employee FindEmployee(Employee phoEmployee, string key) 
         {
             EmployeeList sortedList;

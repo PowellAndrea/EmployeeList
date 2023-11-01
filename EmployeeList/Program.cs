@@ -35,20 +35,27 @@ while (cont)
         case "2":   // Find Employee
             Console.Clear();
             Console.WriteLine("FIND EMPLOYEE\n");
-            Console.WriteLine("Search by: 1) Last Name, 2)First Name, 3) Department:  ");
+            Console.Write("Search by: 1) Last Name, 2)First Name, 3) Department:  ");
             string searchKey = Console.ReadLine();
-            Console.WriteLine("Enter employee's first name: ");
+            Console.Write("\nEnter employee's first name: ");
             string firstName = Console.ReadLine();
-            Console.WriteLine("Enter employee's last name: ");
+            Console.Write("\nEnter employee's last name: ");
             string lastName = Console.ReadLine();
             Employee findMe = new Employee(lastName, firstName);
 
             switch (searchKey)
             {
+                case "1":
+                    searchKey = "last";
+                    break;
+                case "2":
+                    searchKey = "first";
+                    break;
                 case "3":
                     {
                         Console.WriteLine("\n Enter Department : ");
                         findMe.Department = Console.ReadLine();
+                        searchKey = "department";
                         break;
                     }
             }
@@ -56,6 +63,23 @@ while (cont)
 
             break;
         case "3":   // Add Employee
+            {
+                Console.Clear();
+                Console.WriteLine("ADD EMPLOYEE");
+                Console.WriteLine("Enter Employee Details");
+                Console.WriteLine("\tFirst Name: ");
+                string First = Console.ReadLine();
+                Console.WriteLine("\n\tEnter employee's Last Name: ");
+                string Last = Console.ReadLine();
+                Console.WriteLine("\n\tDepartment: " );
+                string Department = Console.ReadLine();
+                Console.WriteLine("\n\tGender: ");
+                string Gender = Console.ReadLine();
+                Console.WriteLine("\n\tSalary: ");
+                string Salary = Console.ReadLine();
+
+                myCompany.newEmployee(Last, First, Gender, Department, Salary);
+            }
             break;
         case "4":   // Display average salary
             Console.WriteLine(myCompany.GetAverageSalary());

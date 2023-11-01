@@ -79,8 +79,7 @@ namespace EmployeeList
             }
         }
 
-
-        public void Add(Employee newEmployee, string? sort = null)  //Default sort = Last Name, First Name
+        public void Add(Employee newEmployee, string? sort)  //Default sort = Last Name, First Name
         {
             if (_head == null)
             {
@@ -89,13 +88,14 @@ namespace EmployeeList
                 _tail = _head;
                 return;
             }
-            else
+            else if (compare(_head, newEmployee, sort) >= 0)
             {   
-                if (compare(_head, newEmployee, sort) >= 0)
-                {
-                    InsertAfterHead(newEmployee);
-                    return;
-                }
+                Employee oldHead = _head;
+                _head = newEmployee;
+                newEmployee.Previous = null;
+                newEmployee.Next = oldHead;
+                oldHead.Previous = _head;
+                return;
             }
 
             Employee current = _head;
@@ -105,32 +105,36 @@ namespace EmployeeList
                 // Case:  current > newEmployee, insert before
                 if (compare(current, newEmployee, sort) > 0)
                 {
-                    InsertBeforeCurrent(current, newEmployee);
+                    Employee oldCurrent = current;
+                    newEmployee.Next = oldCurrent.Next;
+                    newEmployee.Previous = oldCurrent;
+                    oldCurrent.Next = newEmployee;
+
+                    return;
+                }                
+                else if (current.Next == null)  // Insert as Tail
+                {   // Case:  current is the end of list
+                    current.Next = newEmployee;
+                    newEmployee.Previous = current;
+                    _tail = newEmployee;
                     return;
                 }
 
-                // Case:  current < newEmployee, insert after
-                else
-                {   // Case:  current is the end of list
-                    if (current.Next == null)
-                    {
-                        AddAsTail(current, newEmployee);
-                        return;
-                    }
+                // Case:  currentNode < newNode < current.next
+                if (compare(current, newEmployee) > 0)
+                {
+                    Employee oldCurrent = current;
 
-                    // Case:  currentNode < newNode < current.next
-                    if (compare(current, newEmployee) > 0)
-                    {
-                        InsertAfterCurrent(current, newEmployee);
-                        return;
-                    }
+                    newEmployee.Next = oldCurrent.Next;
+                    newEmployee.Previous = oldCurrent;
+                    oldCurrent.Next = newEmployee;
+                    return;
                 }
                 // currentNode < newNode > current.next
                 current = current.Next;
             }
             return;
         }
-
 
         private int compare(Employee current, Employee newEmployee, string? sort=null)
         {
@@ -154,45 +158,6 @@ namespace EmployeeList
             return (currentChoice.CompareTo(newChoice));
         }
 
-        private void InsertAfterHead(Employee newEmployee)
-        {
-            Employee oldHead = _head;
-            _head = newEmployee;
-            newEmployee.Next = oldHead;
-            oldHead.Previous = _head;
-        }
-
-        private void AddAsTail(Employee current, Employee newEmployee)
-        {
-            _tail = newEmployee;
-            current.Next = newEmployee;
-            newEmployee.Previous = current;
-            return;
-        }
-
-        private void InsertAfterCurrent(Employee current, Employee newEmployee)
-        {
-            Employee oldNext = current.Next;
-            current.Next = newEmployee;
-
-            newEmployee.Previous = current;
-            newEmployee.Next = oldNext;
-
-            oldNext.Previous = newEmployee;
-            return;
-        }
-
-        private void InsertBeforeCurrent(Employee current, Employee newEmployee)
-        {
-            Employee oldCurrent = current;
-            newEmployee.Next = oldCurrent;
-            newEmployee.Previous = oldCurrent.Previous;
-
-            oldCurrent.Previous = newEmployee;
-
-            return;
-        }
-
         public EmployeeList Sort(string? sortKey)
         {
             EmployeeList sortList = new();
@@ -210,7 +175,7 @@ namespace EmployeeList
         public double GetAverageSalary()
         {
             int count = 0;
-            double avgSalary = 0;
+            decimal avgSalary = 0;
             if (_head != null)
             {
                 Employee current = _head;
@@ -221,44 +186,17 @@ namespace EmployeeList
                     current = current.Next;
                 }
             }
-            return avgSalary / count;
+            return (double)(avgSalary / count);
         }
 
-        public void Print(string? sortKey)
-        {
-            switch (sortKey){
-            case "2":  // First Name, Last Name
-                    {
-                        Print();
-                        break;
-                    }
-                case "3":  // Department
-                    {
-                        Print();
-                        break;
-                    }
-                default:  // Last Name, First Name
-                    {
-                        Print();
-                        break;
-                    }
-            }
-            return;
-        }
-
-        public void Print()
+        public void Print(string sortKey)
         {
             if (_head != null)
             {
                 Employee current = _head;
                 while (current != null)
                 {
-                    Console.WriteLine(
-                        current.LastName + ", "
-                        + current.FirstName + ", \t"
-                        + ", Department: " + current.Department + "\t"
-                        + ", Salary: " + current.Salary);
-
+                    Console.WriteLine(current.Print(sortKey));
                     current = current.Next;
                 }
             }
