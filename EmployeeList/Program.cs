@@ -36,32 +36,21 @@ while (cont)
             Console.Clear();
             Console.WriteLine("FIND EMPLOYEE\n");
             Console.Write("Search by: 1) Last Name, 2)First Name, 3) Department:  ");
-            string searchKey = Console.ReadLine();
+            string sortKey = Console.ReadLine();
             Console.Write("\nEnter employee's first name: ");
             string firstName = Console.ReadLine();
             Console.Write("\nEnter employee's last name: ");
             string lastName = Console.ReadLine();
             Employee findMe = new Employee(lastName, firstName);
 
-            switch (searchKey)
+            if (sortKey == "department")
             {
-                case "1":
-                    searchKey = "last";
-                    break;
-                case "2":
-                    searchKey = "first";
-                    break;
-                case "3":
-                    {
-                        Console.WriteLine("\n Enter Department : ");
-                        findMe.Department = Console.ReadLine();
-                        searchKey = "department";
-                        break;
-                    }
+               Console.WriteLine("\n Enter Department : ");
+               findMe.Department = Console.ReadLine();
             }
-            myCompany.FindEmployee(findMe, searchKey);
-
+            myCompany.FindEmployee(findMe, sortKey);
             break;
+
         case "3":   // Add Employee
             {
                 Console.Clear();

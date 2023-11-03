@@ -40,14 +40,15 @@
     
         public string Print(string sort)
         {
+            if (sort == null) { sort = "last"; }
             switch (sort)
             {
                 case "first":
-                    return _firstName + " " + _lastName + ",\t " + _gender + ", " + "Department: " + _department + ", " + _salary.ToString();
+                    return _firstName + " " + _lastName + ",\t " + _gender + ", " + "Department: " + _department + ", " + _salary.ToString("C");
                 case "department":
-                    return "Department: " + _department + ",\t " + _firstName + " " + _lastName + _salary.ToString() + ", Gender: " + _gender;
+                    return "Department: " + _department + ",\t " + _firstName + " " + _lastName + _salary.ToString("C") + ", Gender: " + _gender;
                 default:
-                    return _lastName + " " + _firstName + ",\t " + "Department: " + _department + ", " + _salary.ToString() + ", Gender: " +_gender;
+                    return _lastName + " " + _firstName + ",\t " + "Department: " + _department + ", " + _salary.ToString("C") + ", Gender: " +_gender;
             }
         }
     }

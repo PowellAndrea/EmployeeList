@@ -1,4 +1,6 @@
-﻿namespace EmployeeList
+﻿using System.Globalization;
+
+namespace EmployeeList
 {
     public class Company
     {
@@ -22,15 +24,9 @@
             return _employeeList.GetAverageSalary().ToString("C");
         }
 
-        public void PrintEmployeeList(string key)
+        public void PrintEmployeeList(string? sortKey)
         {
-            // validation
-            //if(Enum.IsDefined(EmployeeList.Key., object sortKey){ }
-            // Fix: Setup Search Strings and pass
-            // Fix this - easy to break
-            //EmployeeList.Key key = sortKey;
-            // Print.SortList
-            _employeeList.Print(key);
+            _employeeList.Print(sortKey);
         }
 
         public void newEmployee(
@@ -49,27 +45,24 @@
             };
         }
 
-        public Employee FindEmployee(Employee phoEmployee, string key) 
+        public Employee FindEmployee(Employee phoEmployee, string searchKey) 
         {
-            EmployeeList sortedList;
-            switch (key)
+            Employee found = _employeeList.Find(phoEmployee, searchKey);
+            if (found != null)
             {
-                case "first":
-                    {
-                        sortedList = _employeeList.Sort("first");
-                        break;
-                    }
-                case "department":
-                    {
-                        sortedList = _employeeList.Sort("department");
-                        break;
-                    }
-                default:
-                    sortedList = _employeeList;
-                    break;
+                Console.Write("found: " + found.Print("last"));
+            }
+            else
+            {
+                Console.WriteLine("Employee not found.");
             }
 
-            return sortedList.Find(phoEmployee, key);
+            return found;
+        }
+
+        public bool DeleteEmployee(Employee phoEmployee)
+        {
+            return _employeeList.Delete(phoEmployee);
         }
     }
 }
