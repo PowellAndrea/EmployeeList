@@ -44,11 +44,11 @@
             switch (sort)
             {
                 case "first":
-                    return _firstName + " " + _lastName + ",\t " + _gender + ", " + "Department: " + _department + ", " + _salary.ToString("C");
+                    return _firstName + " " + _lastName + ",\t Department: " + _department + ",\t Gender: " + _gender + "\t Salary: " + _salary.ToString("C");
                 case "department":
-                    return "Department: " + _department + ",\t " + _firstName + " " + _lastName + _salary.ToString("C") + ", Gender: " + _gender;
+                    return "Department: " + _department + ",\t " + _firstName + " " + _lastName + ",\t Salary:" + _salary.ToString("C") + ",\t Gender: " + _gender;
                 default:
-                    return _lastName + " " + _firstName + ",\t " + "Department: " + _department + ", " + _salary.ToString("C") + ", Gender: " +_gender;
+                    return _lastName + ", " + _firstName + ",\t " + "Department: " + _department + ",\t Salary: " + _salary.ToString("C") + ", \t Gender: " +_gender;
             }
         }
     }

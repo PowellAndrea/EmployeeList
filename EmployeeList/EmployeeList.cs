@@ -172,19 +172,25 @@
 
         public EmployeeList Sort(string? sortKey)
         {
-            if (sortKey == "last")
-            {
-                return this;
-            }
-
-            EmployeeList sortList = new();
+            if (sortKey == "last") { return this; }
+            
+            EmployeeList sortList = new EmployeeList();
             Employee current = _head;
-
+            Employee sortCurrent;
+            
             while (current != null)
             {
-                sortList.Add(current, sortKey);
+                sortCurrent = new();
+                sortCurrent.FirstName = current.FirstName;
+                sortCurrent.LastName = current.LastName;
+                sortCurrent.Department = current.Department;
+                sortCurrent.Gender = current.Gender;
+                sortCurrent.Salary = current.Salary;
+                
+                sortList.Add(sortCurrent, sortKey);
                 current = current.Next;
             }
+
             return sortList;
         }
 
@@ -210,6 +216,7 @@
             if (_head != null)
             {
                 Employee current = _head;
+
                 while (current != null)
                 {
                     Console.WriteLine(current.Print(sortKey));
